@@ -18,7 +18,7 @@
 
 package org.apache.hadoop.util;
 
-import com.facebook.presto.hadoop.TextLineLengthLimitExceededException;
+import io.prestosql.hadoop.TextLineLengthLimitExceededException;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
