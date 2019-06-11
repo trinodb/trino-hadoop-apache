@@ -230,10 +230,6 @@
                 </exclusion>
                 <exclusion>
                     <groupId>com.sun.jersey</groupId>
-                    <artifactId>jersey-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.jersey</groupId>
                     <artifactId>jersey-server</artifactId>
                 </exclusion>
                 <exclusion>
@@ -475,6 +471,14 @@
                                     <shadedPattern>${shadeBase}.org.apache.http.mozilla</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>javax.ws.rs</pattern>
+                                    <shadedPattern>${shadeBase}.javax.ws.rs</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.sun.jersey</pattern>
+                                    <shadedPattern>${shadeBase}.com.sun.jersey</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>io.netty</pattern>
                                     <shadedPattern>${shadeBase}.io.netty</shadedPattern>
                                 </relocation>
@@ -567,6 +571,13 @@
                                     <artifact>io.netty:netty-all</artifact>
                                     <excludes>
                                         <exclude>META-INF/io.netty.versions.properties</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>com.sun.jersey:jersey-core</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/services/**</exclude>
+                                        <exclude>META-INF/jersey-module-version</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
