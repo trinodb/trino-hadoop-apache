@@ -77,6 +77,10 @@ public final class PrestoFileSystemCache
     private synchronized FileSystem getInternal(URI uri, Configuration conf, long unique)
             throws IOException
     {
+        synchronized (UserGroupInformation.class) {
+            UserGroupInformation.setConfiguration(conf);
+        }
+
         UserGroupInformation userGroupInformation = UserGroupInformation.getCurrentUser();
         FileSystemKey key = createFileSystemKey(uri, userGroupInformation, unique);
         Set<?> privateCredentials = getPrivateCredentials(userGroupInformation);
