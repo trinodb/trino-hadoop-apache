@@ -354,6 +354,14 @@ public final class PrestoFileSystemCache
         {
             return new OutputStreamWrapper(getRawFileSystem().createNonRecursive(f, permission, flags, bufferSize, replication, blockSize, progress), this);
         }
+
+        // missing in FilterFileSystem (HADOOP-16399)
+        @Override
+        public BlockLocation[] getFileBlockLocations(Path p, long start, long len)
+                throws IOException
+        {
+            return fs.getFileBlockLocations(p, start, len);
+        }
     }
 
     private static class OutputStreamWrapper
