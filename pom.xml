@@ -324,6 +324,12 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-azure-datalake</artifactId>
+            <version>${dep.hadoop.version}</version>
+        </dependency>
+
         <!-- discard all logging from Hadoop -->
         <dependency>
             <groupId>org.slf4j</groupId>
