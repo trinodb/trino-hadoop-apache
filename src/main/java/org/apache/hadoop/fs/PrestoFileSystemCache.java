@@ -25,6 +25,8 @@ import org.apache.hadoop.util.Progressable;
 import org.apache.hadoop.util.ReflectionUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -365,6 +367,12 @@ public final class PrestoFileSystemCache
             super(delegate, null, delegate.getPos());
             this.fileSystem = fileSystem;
         }
+
+        @Override
+        public OutputStream getWrappedStream()
+        {
+            return ((FSDataOutputStream) super.getWrappedStream()).getWrappedStream();
+        }
     }
 
     private static class InputStreamWrapper
@@ -376,6 +384,12 @@ public final class PrestoFileSystemCache
         {
             super(inputStream);
             this.fileSystem = fileSystem;
+        }
+
+        @Override
+        public InputStream getWrappedStream()
+        {
+            return ((FSDataInputStream) super.getWrappedStream()).getWrappedStream();
         }
     }
 }
