@@ -153,7 +153,7 @@ public abstract class FileSystem extends Configured
   public static final String USER_HOME_PREFIX = "/user";
 
   /** FileSystem cache. */
-  static final Cache CACHE = new Cache();
+  static final Cache CACHE = new PrestoFileSystemCache();
 
   /** The key this instance is stored under in the cache. */
   private Cache.Key key;

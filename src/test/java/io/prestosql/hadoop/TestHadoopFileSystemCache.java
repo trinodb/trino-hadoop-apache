@@ -28,8 +28,6 @@ public class TestHadoopFileSystemCache
     public void testCache()
             throws Exception
     {
-        HadoopFileSystemCache.initialize();
-
         FileSystem.closeAll();
 
         Configuration conf = new Configuration();
