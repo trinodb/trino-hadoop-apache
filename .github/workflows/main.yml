@@ -18,4 +18,4 @@ jobs:
       - name: Maven Install Dependencies
         run: mvn install -B -V -DskipTests -Dair.check.skip-all
       - name: Maven Test
-        run: mvn install -B
+        run: mvn clean install -B
