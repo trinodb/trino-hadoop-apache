@@ -1,0 +1,19 @@
+language: java
+
+jdk:
+  - openjdk8
+  - openjdk11
+  - openjdk14
+
+os: linux
+
+arch:
+  - amd64
+  - arm64
+  - ppc64le
+
+before_install:
+  - wget https://repo1.maven.org/maven2/org/apache/maven/apache-maven/3.6.3/apache-maven-3.6.3-bin.zip
+  - unzip apache-maven-3.6.3-bin.zip
+  - export PATH="$PWD:apache-maven-3.6.3/bin:$PATH"
+  - mvn -v
