@@ -152,8 +152,8 @@ public abstract class FileSystem extends Configured
   public static final String TRASH_PREFIX = ".Trash";
   public static final String USER_HOME_PREFIX = "/user";
 
-  /** FileSystem cache. */
-  static final Cache CACHE = new TrinoFileSystemCache();
+  /** FileSystem cache. May be replaced by {@link FileSystemManager}. */
+  static volatile Cache CACHE = new Cache();
 
   /** The key this instance is stored under in the cache. */
   private Cache.Key key;

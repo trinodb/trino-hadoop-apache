@@ -11,13 +11,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.trino.hadoop;
+package org.apache.hadoop.fs;
 
-import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.conf.Configuration;
 
+import java.io.IOException;
 import java.net.URI;
 
-public interface FileSystemFactory
+public interface FileSystemCache
 {
-    FileSystem createFileSystem(URI uri);
+    FileSystem get(URI uri, Configuration configuration)
+            throws IOException;
+
+    FileSystem getUnique(URI uri, Configuration configuration)
+            throws IOException;
+
+    void remove(FileSystem fileSystem);
+
+    void closeAll()
+            throws IOException;
 }
