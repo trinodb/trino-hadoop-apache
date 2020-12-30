@@ -18,7 +18,7 @@
 
 package org.apache.hadoop.util;
 
-import io.prestosql.hadoop.TextLineLengthLimitExceededException;
+import io.trino.hadoop.TextLineLengthLimitExceededException;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;

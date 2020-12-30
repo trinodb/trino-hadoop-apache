@@ -14,7 +14,7 @@
 package org.apache.hadoop.fs;
 
 import com.google.common.collect.ImmutableSet;
-import io.prestosql.hadoop.FileSystemFactory;
+import io.trino.hadoop.FileSystemFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -45,10 +45,10 @@ import static java.util.Objects.requireNonNull;
 import static org.apache.hadoop.fs.FileSystem.getFileSystemClass;
 import static org.apache.hadoop.security.UserGroupInformationShim.getSubject;
 
-public final class PrestoFileSystemCache
+public final class TrinoFileSystemCache
         extends FileSystem.Cache
 {
-    public static final Log log = LogFactory.getLog(PrestoFileSystemCache.class);
+    public static final Log log = LogFactory.getLog(TrinoFileSystemCache.class);
     public static final String CACHE_KEY = "fs.cache.credentials";
 
     private final AtomicLong unique = new AtomicLong();

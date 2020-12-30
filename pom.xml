@@ -8,13 +8,13 @@
         <version>7</version>
     </parent>
 
-    <groupId>io.prestosql.hadoop</groupId>
+    <groupId>io.trino.hadoop</groupId>
     <artifactId>hadoop-apache</artifactId>
     <version>3.2.0-10-SNAPSHOT</version>
 
     <name>hadoop-apache</name>
-    <description>Shaded version of Apache Hadoop for Presto</description>
-    <url>https://github.com/prestosql/presto-hadoop-apache</url>
+    <description>Shaded version of Apache Hadoop for Trino</description>
+    <url>https://github.com/trinodb/trino-hadoop-apache</url>
 
     <inceptionYear>2013</inceptionYear>
 
@@ -31,16 +31,16 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/prestosql/presto-hadoop-apache.git</connection>
-        <developerConnection>scm:git:git://github.com/prestosql/presto-hadoop-apache.git</developerConnection>
-        <url>https://github.com/prestosql/presto-hadoop-apache</url>
+        <connection>scm:git:git://github.com/trinodb/trino-hadoop-apache.git</connection>
+        <developerConnection>scm:git:git://github.com/trinodb/trino-hadoop-apache.git</developerConnection>
+        <url>https://github.com/trinodb/trino-hadoop-apache</url>
         <tag>HEAD</tag>
     </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetJdk>1.8</project.build.targetJdk>
-        <shadeBase>io.prestosql.hadoop.\$internal</shadeBase>
+        <shadeBase>io.trino.hadoop.\$internal</shadeBase>
         <dep.slf4j.version>1.7.25</dep.slf4j.version>
         <dep.hadoop.version>3.2.0</dep.hadoop.version>
     </properties>
