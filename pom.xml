@@ -626,6 +626,12 @@
                                     </excludes>
                                 </filter>
                                 <filter>
+                                    <artifact>com.microsoft.azure:azure-data-lake-store-sdk</artifact>
+                                    <excludes>
+                                        <exclude>com/microsoft/azure/datalake/store/HttpTransport.class</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
                                     <artifact>org.apache.hadoop:hadoop-common</artifact>
                                     <excludes>
                                         <exclude>*.h</exclude>
