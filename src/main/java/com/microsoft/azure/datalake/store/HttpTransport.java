@@ -21,6 +21,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Objects.requireNonNull;
 
 /**
  *
@@ -32,11 +33,18 @@ import org.slf4j.LoggerFactory;
  *     makeCall - wraps retries around makeSingleCall
  * </P>
  */
-class HttpTransport {
+public class HttpTransport {
 
     private static final String API_VERSION = "2017-08-01"; // API version used in REST requests
     private static final Logger log = LoggerFactory.getLogger("com.microsoft.azure.datalake.store.HttpTransport");
     private static final Logger tokenlog = LoggerFactory.getLogger("com.microsoft.azure.datalake.store.HttpTransport.tokens");
+
+    private static Proxy proxy = Proxy.NO_PROXY;
+
+    public static void setConnectionProxy(Proxy proxy)
+    {
+        HttpTransport.proxy = requireNonNull(proxy, "proxy is null");
+    }
 
     /**
      * calls {@link #makeSingleCall(ADLStoreClient, Operation, String, QueryParams, byte[], int, int, RequestOptions, OperationResponse) makeSingleCall}
@@ -252,7 +260,8 @@ class HttpTransport {
         HttpURLConnection conn = null;
         try {
             // Setup Http Request (method and headers)
-            conn = (HttpURLConnection) url.openConnection();
+            conn = (HttpURLConnection) url.openConnection(proxy);
+
             conn.setRequestProperty("Authorization", token);
             conn.setRequestProperty("User-Agent", client.getUserAgent());
             conn.setRequestProperty("x-ms-client-request-id", opts.requestid);
