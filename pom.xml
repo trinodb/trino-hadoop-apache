@@ -520,6 +520,26 @@
                                     <shadedPattern>${shadeBase}.com.google.re2j</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>com.google.errorprone</pattern>
+                                    <shadedPattern>${shadeBase}.com.google.errorprone</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.j2objc</pattern>
+                                    <shadedPattern>${shadeBase}.com.google.j2objc</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.thirdparty</pattern>
+                                    <shadedPattern>${shadeBase}.com.google.thirdparty</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.checkerframework</pattern>
+                                    <shadedPattern>${shadeBase}.org.checkerframework</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.codehaus</pattern>
+                                    <shadedPattern>${shadeBase}.org.codehaus</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>com.fasterxml.jackson</pattern>
                                     <shadedPattern>${shadeBase}.com.fasterxml.jackson</shadedPattern>
                                 </relocation>
