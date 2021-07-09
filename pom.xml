@@ -548,6 +548,10 @@
                                     <shadedPattern>${shadeBase}.org.codehaus.jackson</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>org.codehaus.mojo</pattern>
+                                    <shadedPattern>${shadeBase}.org.codehaus.mojo</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>com.ctc.wstx</pattern>
                                     <shadedPattern>${shadeBase}.com.ctc.wstx</shadedPattern>
                                 </relocation>
