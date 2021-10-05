@@ -643,6 +643,13 @@
                                     </excludes>
                                 </filter>
                                 <filter>
+                                    <artifact>org.apache.hadoop:hadoop-auth</artifact>
+                                    <excludes>
+                                        <exclude>org/apache/hadoop/security/authentication/util/KerberosUtil.class</exclude>
+                                        <exclude>org/apache/hadoop/security/authentication/util/KerberosUtil$*.class</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
                                     <artifact>org.apache.hadoop:hadoop-mapreduce-client-core</artifact>
                                     <excludes>
                                         <exclude>mapred-default.xml.orig</exclude>
