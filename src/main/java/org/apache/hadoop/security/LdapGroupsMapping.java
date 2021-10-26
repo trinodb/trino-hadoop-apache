@@ -541,8 +541,7 @@ public class LdapGroupsMapping
         if (ctx == null) {
             // Set up the initial environment for LDAP connectivity
             Hashtable<String, String> env = new Hashtable<String, String>();
-            env.put(Context.INITIAL_CONTEXT_FACTORY,
-                    com.sun.jndi.ldap.LdapCtxFactory.class.getName());
+            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
             env.put(Context.PROVIDER_URL, ldapUrl);
             env.put(Context.SECURITY_AUTHENTICATION, "simple");
 
