@@ -640,6 +640,8 @@
                                         <exclude>org/apache/hadoop/util/LineReader.class</exclude>
                                         <exclude>org/apache/hadoop/crypto/key/kms/KMSClientProvider.class</exclude>
                                         <exclude>org/apache/hadoop/crypto/key/kms/KMSClientProvider$*.class</exclude>
+                                        <exclude>org/apache/hadoop/security/LdapGroupsMapping.class</exclude>
+                                        <exclude>org/apache/hadoop/security/LdapGroupsMapping$*.class</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
