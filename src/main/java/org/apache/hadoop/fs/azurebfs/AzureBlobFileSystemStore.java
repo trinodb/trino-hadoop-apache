@@ -104,7 +104,9 @@ public class AzureBlobFileSystemStore {
     private final UserGroupInformation userGroupInformation;
     private final String userName;
     private final String primaryUserGroup;
-    private static final String DATE_TIME_PATTERN = "E, dd MMM yyyy HH:mm:ss 'GMT'";
+    // See https://issues.apache.org/jira/browse/HADOOP-16479 for DATE_TIME_PATTERN modification
+    // TODO Drop the change (and the file) after upgrading to hadoop 3.3.0
+    private static final String DATE_TIME_PATTERN = "E, dd MMM yyyy HH:mm:ss z";
     private static final String XMS_PROPERTIES_ENCODING = "ISO-8859-1";
     private static final int LIST_MAX_RESULTS = 5000;
     private static final int DELETE_DIRECTORY_TIMEOUT_MILISECONDS = 180000;
