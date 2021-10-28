@@ -650,6 +650,13 @@
                                     </excludes>
                                 </filter>
                                 <filter>
+                                    <artifact>org.apache.hadoop:hadoop-azure</artifact>
+                                    <excludes>
+                                        <exclude>org/apache/hadoop/fs/azurebfs/AzureBlobFileSystemStore.class</exclude>
+                                        <exclude>org/apache/hadoop/fs/azurebfs/AzureBlobFileSystemStore$*.class</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
                                     <artifact>org.apache.hadoop:hadoop-mapreduce-client-core</artifact>
                                     <excludes>
                                         <exclude>mapred-default.xml.orig</exclude>
