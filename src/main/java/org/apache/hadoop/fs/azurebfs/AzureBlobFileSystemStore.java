@@ -988,7 +988,7 @@ public class AzureBlobFileSystemStore {
 
             FileStatus other = (FileStatus) obj;
 
-            if (!other.equals(this)) {// compare the path
+            if (!this.getPath().equals(other.getPath())) {
                 return false;
             }
 
