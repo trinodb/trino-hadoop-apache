@@ -432,7 +432,7 @@ public abstract class FileSystem extends Configured
    */
   public static LocalFileSystem getLocal(Configuration conf)
     throws IOException {
-    return (LocalFileSystem)get(LocalFileSystem.NAME, conf);
+    return ensureLocalFileSystem(get(LocalFileSystem.NAME, conf));
   }
 
   /**
@@ -552,7 +552,14 @@ public abstract class FileSystem extends Configured
    */
   public static LocalFileSystem newInstanceLocal(Configuration conf)
     throws IOException {
-    return (LocalFileSystem)newInstance(LocalFileSystem.NAME, conf);
+    return ensureLocalFileSystem(newInstance(LocalFileSystem.NAME, conf));
+  }
+
+  private static LocalFileSystem ensureLocalFileSystem(FileSystem fileSystem) {
+    if (fileSystem instanceof LocalFileSystem) {
+      return (LocalFileSystem) fileSystem;
+    }
+    return new LocalFileSystemWrapper(fileSystem);
   }
 
   /**
