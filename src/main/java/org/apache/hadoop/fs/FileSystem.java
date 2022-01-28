@@ -202,8 +202,8 @@ public abstract class FileSystem extends Configured
   public static final String TRASH_PREFIX = ".Trash";
   public static final String USER_HOME_PREFIX = "/user";
 
-  /** FileSystem cache. */
-  static final Cache CACHE = new Cache(new Configuration());
+  /** FileSystem cache. May be replaced by {@link FileSystemManager}. */
+  static volatile Cache CACHE = new Cache(new Configuration());
 
   /** The key this instance is stored under in the cache. */
   private Cache.Key key;
@@ -3483,7 +3483,7 @@ public abstract class FileSystem extends Configured
   }
 
   /** Caching FileSystem objects. */
-  static final class Cache {
+  static class Cache {
     private final ClientFinalizer clientFinalizer = new ClientFinalizer();
 
     private final Map<Key, FileSystem> map = new HashMap<>();

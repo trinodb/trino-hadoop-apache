@@ -79,9 +79,9 @@ import org.apache.hadoop.crypto.key.KeyProviderCryptoExtension;
 import org.apache.hadoop.crypto.key.KeyProviderCryptoExtension.CryptoExtension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
+import org.apache.hadoop.thirdparty.com.google.common.annotations.VisibleForTesting;
+import org.apache.hadoop.thirdparty.com.google.common.base.Preconditions;
+import org.apache.hadoop.thirdparty.com.google.common.base.Strings;
 
 import static org.apache.hadoop.util.KMSUtil.checkNotEmpty;
 import static org.apache.hadoop.util.KMSUtil.checkNotNull;
@@ -263,12 +263,12 @@ public class KMSClientProvider extends KeyProvider implements CryptoExtension,
 
         /**
          * This provider expects URIs in the following form :
-         * kms://<PROTO>@<AUTHORITY>/<PATH>
+         * {@literal kms://<PROTO>@<AUTHORITY>/<PATH>}
          *
          * where :
          * - PROTO = http or https
-         * - AUTHORITY = <HOSTS>[:<PORT>]
-         * - HOSTS = <HOSTNAME>[;<HOSTS>]
+         * - AUTHORITY = {@literal <HOSTS>[:<PORT>]}
+         * - HOSTS = {@literal <HOSTNAME>[;<HOSTS>]}
          * - HOSTNAME = string
          * - PORT = integer
          *

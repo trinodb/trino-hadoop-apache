@@ -22,6 +22,9 @@ import io.trino.hadoop.TextLineLengthLimitExceededException;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.statistics.IOStatistics;
+import org.apache.hadoop.fs.statistics.IOStatisticsSource;
+import org.apache.hadoop.fs.statistics.IOStatisticsSupport;
 import org.apache.hadoop.io.Text;
 
 import java.io.Closeable;
@@ -42,7 +45,7 @@ import java.io.InputStream;
 @InterfaceAudience.LimitedPrivate({"MapReduce"})
 @InterfaceStability.Unstable
 public class LineReader
-        implements Closeable
+        implements Closeable, IOStatisticsSource
 {
     // Limitation for array size is VM specific. Current HotSpot VM limitation
     // for array size is Integer.MAX_VALUE - 5 (2^31 - 1 - 5).
@@ -65,7 +68,6 @@ public class LineReader
      * Create a line reader that reads from the given stream using the
      * default buffer-size (64k).
      * @param in The input stream
-     * @throws IOException
      */
     public LineReader(InputStream in)
     {
@@ -77,7 +79,6 @@ public class LineReader
      * given buffer-size.
      * @param in The input stream
      * @param bufferSize Size of the read buffer
-     * @throws IOException
      */
     public LineReader(InputStream in, int bufferSize)
     {
@@ -123,7 +124,6 @@ public class LineReader
      * @param in The input stream
      * @param bufferSize Size of the read buffer
      * @param recordDelimiterBytes The delimiter
-     * @throws IOException
      */
     public LineReader(InputStream in, int bufferSize,
             byte[] recordDelimiterBytes)
@@ -162,6 +162,16 @@ public class LineReader
             throws IOException
     {
         in.close();
+    }
+
+    /**
+     * Return any IOStatistics provided by the source.
+     * @return IO stats from the input stream.
+     */
+    @Override
+    public IOStatistics getIOStatistics()
+    {
+        return IOStatisticsSupport.retrieveIOStatistics(in);
     }
 
     /**

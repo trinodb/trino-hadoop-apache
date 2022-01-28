@@ -10,7 +10,7 @@
 
     <groupId>io.trino.hadoop</groupId>
     <artifactId>hadoop-apache</artifactId>
-    <version>3.2.0-18-SNAPSHOT</version>
+    <version>3.3.1-1-SNAPSHOT</version>
 
     <name>hadoop-apache</name>
     <description>Shaded version of Apache Hadoop for Trino</description>
@@ -41,8 +41,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetJdk>1.8</project.build.targetJdk>
         <shadeBase>io.trino.hadoop.\$internal</shadeBase>
-        <dep.slf4j.version>1.7.25</dep.slf4j.version>
-        <dep.hadoop.version>3.2.0</dep.hadoop.version>
+        <dep.slf4j.version>1.7.30</dep.slf4j.version>
+        <dep.hadoop.version>3.3.1</dep.hadoop.version>
     </properties>
 
     <dependencies>
@@ -188,10 +188,6 @@
                     <artifactId>snappy-java</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.google.code.findbugs</groupId>
-                    <artifactId>jsr305</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
@@ -320,6 +316,19 @@
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-azure-datalake</artifactId>
             <version>${dep.hadoop.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.lz4</groupId>
+            <artifactId>lz4-java</artifactId>
+            <version>1.7.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+            <version>1.1.8.2</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- discard all logging from Hadoop -->
@@ -508,6 +517,15 @@
                                     <shadedPattern>${shadeBase}.com.google.common</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>com.google.guava</pattern>
+                                    <shadedPattern>${shadeBase}.com.google.guava</shadedPattern>
+                                </relocation>
+                                <!-- this comes from com.google.guava -->
+                                <relocation>
+                                    <pattern>com.google.thirdparty</pattern>
+                                    <shadedPattern>${shadeBase}.com.google.thirdparty</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>com.google.protobuf</pattern>
                                     <shadedPattern>${shadeBase}.com.google.protobuf</shadedPattern>
                                 </relocation>
@@ -522,6 +540,10 @@
                                 <relocation>
                                     <pattern>com.fasterxml.jackson</pattern>
                                     <shadedPattern>${shadeBase}.com.fasterxml.jackson</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.hadoop.thirdparty</pattern>
+                                    <shadedPattern>${shadeBase}org.apache.hadoop.thirdparty</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.codehaus.jackson</pattern>
@@ -550,6 +572,27 @@
                                 <relocation>
                                     <pattern>okio</pattern>
                                     <shadedPattern>${shadeBase}.okio</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>jakarta.activation</pattern>
+                                    <shadedPattern>${shadeBase}.jakarta.activation</shadedPattern>
+                                </relocation>
+                                <!-- this comes from jakarta.activation -->
+                                <relocation>
+                                    <pattern>javax.activation</pattern>
+                                    <shadedPattern>${shadeBase}.javax.activation</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.j2objc</pattern>
+                                    <shadedPattern>${shadeBase}.com.google.j2objc</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.checkerframework</pattern>
+                                    <shadedPattern>${shadeBase}.org.checkerframework</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.codehaus.mojo</pattern>
+                                    <shadedPattern>${shadeBase}.org.codehaus.mojo</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
