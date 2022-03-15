@@ -46,7 +46,7 @@ final class ForwardingFileSystemCache
     }
 
     @Override
-    synchronized void remove(Key ignored, FileSystem fileSystem)
+    void remove(Key ignored, FileSystem fileSystem)
     {
         if (fileSystem == null) {
             return;
@@ -55,20 +55,20 @@ final class ForwardingFileSystemCache
     }
 
     @Override
-    synchronized void closeAll()
+    void closeAll()
             throws IOException
     {
         cache.closeAll();
     }
 
     @Override
-    synchronized void closeAll(boolean onlyAutomatic)
+    void closeAll(boolean onlyAutomatic)
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    synchronized void closeAll(UserGroupInformation ugi)
+    void closeAll(UserGroupInformation ugi)
     {
         throw new UnsupportedOperationException();
     }
