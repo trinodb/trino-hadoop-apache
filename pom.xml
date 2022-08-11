@@ -42,7 +42,7 @@
         <project.build.targetJdk>1.8</project.build.targetJdk>
         <shadeBase>io.trino.hadoop.\$internal</shadeBase>
         <dep.slf4j.version>1.7.25</dep.slf4j.version>
-        <dep.hadoop.version>3.2.0</dep.hadoop.version>
+        <dep.hadoop.version>3.2.4</dep.hadoop.version>
     </properties>
 
     <dependencies>
