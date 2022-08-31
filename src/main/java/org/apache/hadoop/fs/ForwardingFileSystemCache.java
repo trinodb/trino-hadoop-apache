@@ -28,6 +28,7 @@ final class ForwardingFileSystemCache
 
     public ForwardingFileSystemCache(FileSystemCache cache)
     {
+        super(new Configuration(false));
         this.cache = requireNonNull(cache, "cache is null");
     }
 
