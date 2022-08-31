@@ -10,7 +10,7 @@
 
     <groupId>io.trino.hadoop</groupId>
     <artifactId>hadoop-apache</artifactId>
-    <version>3.2.0-19-SNAPSHOT</version>
+    <version>3.3.5-1-SNAPSHOT</version>
 
     <name>hadoop-apache</name>
     <description>Shaded version of Apache Hadoop for Trino</description>
@@ -41,8 +41,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.targetJdk>1.8</project.build.targetJdk>
         <shadeBase>io.trino.hadoop.\$internal</shadeBase>
-        <dep.slf4j.version>1.7.25</dep.slf4j.version>
-        <dep.hadoop.version>3.2.0</dep.hadoop.version>
+        <dep.slf4j.version>1.7.36</dep.slf4j.version>
+        <dep.hadoop.version>3.3.5</dep.hadoop.version>
     </properties>
 
     <dependencies>
@@ -89,10 +89,6 @@
                 </exclusion>
                 <exclusion>
                     <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-compress</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
                     <artifactId>commons-math</artifactId>
                 </exclusion>
                 <exclusion>
@@ -136,6 +132,10 @@
                     <artifactId>jersey-servlet</artifactId>
                 </exclusion>
                 <exclusion>
+                    <groupId>com.github.pjfanning</groupId>
+                    <artifactId>jersey-json</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>javax.servlet</groupId>
                     <artifactId>javax.servlet-api</artifactId>
                 </exclusion>
@@ -164,10 +164,6 @@
                     <artifactId>jsch</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>jdk.tools</groupId>
-                    <artifactId>jdk.tools</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>dnsjava</groupId>
                     <artifactId>dnsjava</artifactId>
                 </exclusion>
@@ -184,20 +180,20 @@
                     <artifactId>paranamer</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.xerial.snappy</groupId>
-                    <artifactId>snappy-java</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.code.findbugs</groupId>
-                    <artifactId>jsr305</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-reload4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.reload4j</groupId>
+                    <artifactId>reload4j</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -260,6 +256,14 @@
                     <groupId>io.netty</groupId>
                     <artifactId>netty</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-reload4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.reload4j</groupId>
+                    <artifactId>reload4j</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -282,16 +286,16 @@
                     <artifactId>guice-servlet</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-annotations</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>io.netty</groupId>
                     <artifactId>netty</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-reload4j</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -302,16 +306,8 @@
             <version>${dep.hadoop.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.wildfly.openssl</groupId>
                     <artifactId>wildfly-openssl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -320,6 +316,30 @@
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-azure-datalake</artifactId>
             <version>${dep.hadoop.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.wildfly.openssl</groupId>
+                    <artifactId>wildfly-openssl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>27.0.1-jre</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+            <version>1.1.10.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.lz4</groupId>
+            <artifactId>lz4-java</artifactId>
+            <version>1.8.0</version>
         </dependency>
 
         <!-- discard all logging from Hadoop -->
@@ -455,14 +475,20 @@
                             <shadeSourcesContent>true</shadeSourcesContent>
                             <dependencyReducedPomLocation>${project.build.directory}/pom.xml</dependencyReducedPomLocation>
                             <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.xerial.snappy:snappy-java</exclude>
+                                    <exclude>org.lz4:lz4-java</exclude>
+                                    <exclude>com.squareup.okhttp3:okhttp</exclude>
+                                    <exclude>com.squareup.okio:okio</exclude>
+                                    <exclude>org.jetbrains.kotlin:kotlin-stdlib</exclude>
+                                    <exclude>org.jetbrains.kotlin:kotlin-stdlib-common</exclude>
+                                </excludes>
+                            </artifactSet>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                             </transformers>
                             <relocations>
-                                <relocation>
-                                    <pattern>org.iq80.leveldb</pattern>
-                                    <shadedPattern>${shadeBase}.org.iq80.leveldb</shadedPattern>
-                                </relocation>
                                 <relocation>
                                     <pattern>org.apache.http</pattern>
                                     <shadedPattern>${shadeBase}.org.apache.http</shadedPattern>
@@ -496,16 +522,25 @@
                                     <shadedPattern>${shadeBase}.org.apache.kerby</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>org.apache.htrace</pattern>
-                                    <shadedPattern>${shadeBase}.htrace</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>org.wildfly.openssl</pattern>
                                     <shadedPattern>${shadeBase}.org.wildfly.openssl</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.google.common</pattern>
                                     <shadedPattern>${shadeBase}.com.google.common</shadedPattern>
+                                </relocation>
+                                <!-- this comes from com.google.guava -->
+                                <relocation>
+                                    <pattern>com.google.thirdparty</pattern>
+                                    <shadedPattern>${shadeBase}.com.google.thirdparty</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.j2objc</pattern>
+                                    <shadedPattern>${shadeBase}.com.google.j2objc</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.errorprone</pattern>
+                                    <shadedPattern>${shadeBase}.com.google.j2objc</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.google.protobuf</pattern>
@@ -536,6 +571,10 @@
                                     <shadedPattern>${shadeBase}.org.codehaus.stax2</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>org.apache.hadoop.thirdparty</pattern>
+                                    <shadedPattern>${shadeBase}.org.apache.hadoop.thirdparty</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>org.apache.log4j</pattern>
                                     <shadedPattern>${shadeBase}.org.apache.log4j</shadedPattern>
                                 </relocation>
@@ -543,13 +582,23 @@
                                     <pattern>org.slf4j</pattern>
                                     <shadedPattern>${shadeBase}.org.slf4j</shadedPattern>
                                 </relocation>
+                                <!-- from com.google.code.findbugs: -->
                                 <relocation>
-                                    <pattern>com.squareup.okhttp</pattern>
-                                    <shadedPattern>${shadeBase}.com.squareup.okhttp</shadedPattern>
+                                    <pattern>javax.annotation</pattern>
+                                    <shadedPattern>${shadeBase}.javax.annotation</shadedPattern>
+                                </relocation>
+                                <!-- this comes from jakarta.activation -->
+                                <relocation>
+                                    <pattern>javax.activation</pattern>
+                                    <shadedPattern>${shadeBase}.javax.activation</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>okio</pattern>
-                                    <shadedPattern>${shadeBase}.okio</shadedPattern>
+                                    <pattern>org.checkerframework</pattern>
+                                    <shadedPattern>${shadeBase}.org.checkerframework</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.codehaus.mojo</pattern>
+                                    <shadedPattern>${shadeBase}.org.codehaus.mojo</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
@@ -557,9 +606,11 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/maven/**</exclude>
+                                        <exclude>META-INF/versions/**</exclude>
                                         <exclude>META-INF/*.SF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>module-info.java</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
@@ -569,9 +620,15 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>io.netty:netty-all</artifact>
+                                    <artifact>io.netty:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/io.netty.versions.properties</exclude>
+                                        <exclude>META-INF/native-image/**</exclude>
+                                        <exclude>META-INF/native/**</exclude>
+                                        <exclude>META-INF/services/**</exclude>
+                                        <exclude>com/sun/nio/sctp/**</exclude>
+                                        <exclude>*.c</exclude>
+                                        <exclude>*.h</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
@@ -584,6 +641,12 @@
                                     <artifact>com.fasterxml.woodstox:woodstox-core</artifact>
                                     <excludes>
                                         <exclude>META-INF/services/**</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>jakarta.activation:jakarta.activation-api</artifact>
+                                    <excludes>
+                                        <exclude>pom.xml</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
@@ -620,12 +683,6 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>org.apache.htrace:htrace-core4</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/services/com.fasterxml.jackson.*</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
                                     <artifact>com.microsoft.azure:azure-data-lake-store-sdk</artifact>
                                     <excludes>
                                         <exclude>com/microsoft/azure/datalake/store/HttpTransport.class</exclude>
@@ -640,22 +697,6 @@
                                         <exclude>org/apache/hadoop/util/LineReader.class</exclude>
                                         <exclude>org/apache/hadoop/crypto/key/kms/KMSClientProvider.class</exclude>
                                         <exclude>org/apache/hadoop/crypto/key/kms/KMSClientProvider$*.class</exclude>
-                                        <exclude>org/apache/hadoop/security/LdapGroupsMapping.class</exclude>
-                                        <exclude>org/apache/hadoop/security/LdapGroupsMapping$*.class</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.apache.hadoop:hadoop-auth</artifact>
-                                    <excludes>
-                                        <exclude>org/apache/hadoop/security/authentication/util/KerberosUtil.class</exclude>
-                                        <exclude>org/apache/hadoop/security/authentication/util/KerberosUtil$*.class</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.apache.hadoop:hadoop-azure</artifact>
-                                    <excludes>
-                                        <exclude>org/apache/hadoop/fs/azurebfs/AzureBlobFileSystemStore.class</exclude>
-                                        <exclude>org/apache/hadoop/fs/azurebfs/AzureBlobFileSystemStore$*.class</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>

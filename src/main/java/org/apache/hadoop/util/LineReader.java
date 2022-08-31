@@ -22,6 +22,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 
+import io.trino.hadoop.TextLineLengthLimitExceededException;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
@@ -46,6 +47,10 @@ import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.IO_FILE_BUFFER_
 @InterfaceAudience.LimitedPrivate({"MapReduce"})
 @InterfaceStability.Unstable
 public class LineReader implements Closeable, IOStatisticsSource {
+  // Limitation for array size is VM specific. Current HotSpot VM limitation
+  // for array size is Integer.MAX_VALUE - 5 (2^31 - 1 - 5).
+  // Integer.MAX_VALUE - 8 should be safe enough.
+  private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
   private static final int DEFAULT_BUFFER_SIZE = 64 * 1024;
   private int bufferSize = DEFAULT_BUFFER_SIZE;
   private InputStream in;
@@ -179,6 +184,8 @@ public class LineReader implements Closeable, IOStatisticsSource {
    */
   public int readLine(Text str, int maxLineLength,
                       int maxBytesToConsume) throws IOException {
+    maxLineLength = Math.min(maxLineLength, MAX_ARRAY_SIZE);
+    maxBytesToConsume = Math.min(maxBytesToConsume, MAX_ARRAY_SIZE);
     if (this.recordDelimiterBytes != null) {
       return readCustomLine(str, maxLineLength, maxBytesToConsume);
     } else {
@@ -249,15 +256,28 @@ public class LineReader implements Closeable, IOStatisticsSource {
       int appendLength = readLength - newlineLength;
       if (appendLength > maxLineLength - txtLength) {
         appendLength = maxLineLength - txtLength;
+        if (appendLength > 0) {
+          // We want to fail the read when the line length is over the limit.
+          throw new TextLineLengthLimitExceededException("Too many bytes before newline: " + maxLineLength);
+        }
       }
       if (appendLength > 0) {
+        int newTxtLength = txtLength + appendLength;
+        if (str.getBytes().length < newTxtLength && Math.max(newTxtLength, txtLength << 1) > MAX_ARRAY_SIZE) {
+          // If str need to be resized but the target capacity is over VM limit, it will trigger OOM.
+          // In such case we will throw an IOException so the caller can deal with it.
+          throw new TextLineLengthLimitExceededException("Too many bytes before newline: " + newTxtLength);
+        }
         str.append(buffer, startPosn, appendLength);
-        txtLength += appendLength;
+        txtLength = newTxtLength;
       }
     } while (newlineLength == 0 && bytesConsumed < maxBytesToConsume);
 
-    if (bytesConsumed > Integer.MAX_VALUE) {
-      throw new IOException("Too many bytes before newline: " + bytesConsumed);
+    if (newlineLength == 0 && bytesConsumed >= maxBytesToConsume) {
+      // It is possible that bytesConsumed is over the maxBytesToConsume but we
+      // didn't append anything to str.bytes. If we have consumed over maxBytesToConsume
+      // bytes but still haven't seen a line terminator, we will fail the read.
+      throw new TextLineLengthLimitExceededException("Too many bytes before newline: " + bytesConsumed);
     }
     return (int)bytesConsumed;
   }
@@ -341,6 +361,10 @@ public class LineReader implements Closeable, IOStatisticsSource {
       int appendLength = readLength - delPosn;
       if (appendLength > maxLineLength - txtLength) {
         appendLength = maxLineLength - txtLength;
+        if (appendLength > 0) {
+          // We want to fail the read when the line length is over the limit.
+          throw new TextLineLengthLimitExceededException("Too many bytes before delimiter: " + maxLineLength);
+        }
       }
       bytesConsumed += ambiguousByteCount;
       if (appendLength >= 0 && ambiguousByteCount > 0) {
@@ -353,8 +377,14 @@ public class LineReader implements Closeable, IOStatisticsSource {
         unsetNeedAdditionalRecordAfterSplit();
       }
       if (appendLength > 0) {
+        int newTxtLength = txtLength + appendLength;
+        if (str.getBytes().length < newTxtLength && Math.max(newTxtLength, txtLength << 1) > MAX_ARRAY_SIZE) {
+          // If str need to be resized but the target capacity is over VM limit, it will trigger OOM.
+          // In such case we will throw an IOException so the caller can deal with it.
+          throw new TextLineLengthLimitExceededException("Too many bytes before delimiter: " + newTxtLength);
+        }
         str.append(buffer, startPosn, appendLength);
-        txtLength += appendLength;
+        txtLength = newTxtLength;
       }
       if (bufferPosn >= bufferLength) {
         if (delPosn > 0 && delPosn < recordDelimiterBytes.length) {
@@ -364,8 +394,12 @@ public class LineReader implements Closeable, IOStatisticsSource {
       }
     } while (delPosn < recordDelimiterBytes.length 
         && bytesConsumed < maxBytesToConsume);
-    if (bytesConsumed > Integer.MAX_VALUE) {
-      throw new IOException("Too many bytes before delimiter: " + bytesConsumed);
+    if (delPosn < recordDelimiterBytes.length
+            && bytesConsumed >= maxBytesToConsume) {
+      // It is possible that bytesConsumed is over the maxBytesToConsume but we
+      // didn't append anything to str.bytes. If we have consumed over maxBytesToConsume
+      // bytes but still haven't seen a line terminator, we will fail the read.
+      throw new TextLineLengthLimitExceededException("Too many bytes before delimiter: " + bytesConsumed);
     }
     return (int) bytesConsumed; 
   }

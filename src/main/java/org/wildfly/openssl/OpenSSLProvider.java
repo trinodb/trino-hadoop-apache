@@ -13,23 +13,9 @@
  */
 package org.wildfly.openssl;
 
-import org.apache.hadoop.fs.azurebfs.utils.SSLSocketFactoryEx;
-import org.apache.hadoop.fs.azurebfs.utils.SSLSocketFactoryEx.SSLChannelMode;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-
 public final class OpenSSLProvider
 {
     private OpenSSLProvider() {}
 
-    public static void register()
-    {
-        try {
-            SSLSocketFactoryEx.initializeDefaultFactory(SSLChannelMode.Default_JSSE);
-        }
-        catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
+    public static void register() {}
 }
