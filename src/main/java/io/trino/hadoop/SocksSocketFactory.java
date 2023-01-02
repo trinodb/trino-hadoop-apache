@@ -112,7 +112,7 @@ public class SocksSocketFactory
                     throws IOException
             {
                 try {
-                    SocketAddress address = new InetSocketAddress(InetAddress.getByName(proxy.getHostText()), proxy.getPort());
+                    SocketAddress address = new InetSocketAddress(InetAddress.getByName(proxy.getHost()), proxy.getPort());
                     socket.connect(address, timeout);
                 }
                 catch (IOException e) {
