@@ -25,7 +25,6 @@ import java.lang.ref.WeakReference;
 import java.lang.ref.ReferenceQueue;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -272,12 +271,7 @@ public abstract class FileSystem extends Configured
       conf.get(CommonConfigurationKeys.KERBEROS_TICKET_CACHE_PATH);
     UserGroupInformation ugi =
         UserGroupInformation.getBestUGI(ticketCachePath, user);
-    return ugi.doAs(new PrivilegedExceptionAction<FileSystem>() {
-      @Override
-      public FileSystem run() throws IOException {
-        return get(uri, conf);
-      }
-    });
+    return ugi.callAs(() -> get(uri, conf));
   }
 
   /**
@@ -574,12 +568,7 @@ public abstract class FileSystem extends Configured
       conf.get(CommonConfigurationKeys.KERBEROS_TICKET_CACHE_PATH);
     UserGroupInformation ugi =
         UserGroupInformation.getBestUGI(ticketCachePath, user);
-    return ugi.doAs(new PrivilegedExceptionAction<FileSystem>() {
-      @Override
-      public FileSystem run() throws IOException {
-        return newInstance(uri, conf);
-      }
-    });
+    return ugi.callAs(() -> newInstance(uri, conf));
   }
 
   /**
