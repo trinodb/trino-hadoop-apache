@@ -609,6 +609,8 @@
                                         <exclude>org/apache/hadoop/fs/FileSystem.class</exclude>
                                         <exclude>org/apache/hadoop/fs/FileSystem$*.class</exclude>
                                         <exclude>org/apache/hadoop/util/NativeCodeLoader.class</exclude>
+                                        <exclude>org/apache/hadoop/security/UserGroupInformation.class</exclude>
+                                        <exclude>org/apache/hadoop/security/UserGroupInformation$*.class</exclude>
                                         <exclude>org/apache/hadoop/crypto/key/kms/KMSClientProvider.class</exclude>
                                         <exclude>org/apache/hadoop/crypto/key/kms/KMSClientProvider$*.class</exclude>
                                     </excludes>
