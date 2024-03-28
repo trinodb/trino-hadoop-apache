@@ -35,11 +35,8 @@ import org.apache.hadoop.thirdparty.com.google.common.annotations.VisibleForTest
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.security.AccessControlContext;
-import java.security.AccessController;
 import java.security.Principal;
 import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,9 +50,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -575,8 +574,7 @@ public class UserGroupInformation {
     @InterfaceStability.Evolving
     public static UserGroupInformation getCurrentUser() throws IOException {
         ensureInitialized();
-        AccessControlContext context = AccessController.getContext();
-        Subject subject = Subject.getSubject(context);
+        Subject subject = Subject.current();
         if (subject == null || subject.getPrincipals(User.class).isEmpty()) {
             return getLoginUser();
         } else {
@@ -1863,19 +1861,44 @@ public class UserGroupInformation {
     }
 
     /**
-     * Run the given action as the user.
+     * Run the given action as the user, potentially throwing an exception.
      * @param <T> the return type of the run method
      * @param action the method to execute
      * @return the value from the run method
+     * @throws IOException if the action throws an IOException
+     * @throws Error if the action throws an Error
+     * @throws RuntimeException if the action throws a RuntimeException
+     * @throws InterruptedException if the action throws an InterruptedException
+     * @throws UndeclaredThrowableException if the action throws something else
      */
     @InterfaceAudience.Public
     @InterfaceStability.Evolving
-    public <T> T doAs(PrivilegedAction<T> action) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("PrivilegedAction [as: {}][action: {}]", this, action,
-                    new Exception());
+    public <T> T callAs(Callable<T> action
+    ) throws IOException, InterruptedException {
+        try {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("PrivilegedAction [as: {}][action: {}]", this, action,
+                        new Exception());
+            }
+            return Subject.callAs(subject, action);
+        } catch (CompletionException coe) {
+            Throwable cause = coe.getCause();
+            LOG.debug("CompletionException as: {}", this, cause);
+            if (cause == null) {
+                throw new RuntimeException("CompletionException with no " +
+                        "underlying cause. UGI [" + this + "]" +": " + coe, coe);
+            } else if (cause instanceof IOException) {
+                throw (IOException) cause;
+            } else if (cause instanceof Error) {
+                throw (Error) cause;
+            } else if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            } else if (cause instanceof InterruptedException) {
+                throw (InterruptedException) cause;
+            } else {
+                throw new UndeclaredThrowableException(cause);
+            }
         }
-        return Subject.doAs(subject, action);
     }
 
     /**
@@ -1893,30 +1916,7 @@ public class UserGroupInformation {
     @InterfaceStability.Evolving
     public <T> T doAs(PrivilegedExceptionAction<T> action
     ) throws IOException, InterruptedException {
-        try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("PrivilegedAction [as: {}][action: {}]", this, action,
-                        new Exception());
-            }
-            return Subject.doAs(subject, action);
-        } catch (PrivilegedActionException pae) {
-            Throwable cause = pae.getCause();
-            LOG.debug("PrivilegedActionException as: {}", this, cause);
-            if (cause == null) {
-                throw new RuntimeException("PrivilegedActionException with no " +
-                        "underlying cause. UGI [" + this + "]" +": " + pae, pae);
-            } else if (cause instanceof IOException) {
-                throw (IOException) cause;
-            } else if (cause instanceof Error) {
-                throw (Error) cause;
-            } else if (cause instanceof RuntimeException) {
-                throw (RuntimeException) cause;
-            } else if (cause instanceof InterruptedException) {
-                throw (InterruptedException) cause;
-            } else {
-                throw new UndeclaredThrowableException(cause);
-            }
-        }
+        return callAs(action::run);
     }
 
     /**

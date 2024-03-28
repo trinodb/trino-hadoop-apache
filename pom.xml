@@ -39,7 +39,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.targetJdk>1.8</project.build.targetJdk>
+        <project.build.targetJdk>21</project.build.targetJdk>
         <shadeBase>io.trino.hadoop.\$internal</shadeBase>
         <dep.slf4j.version>1.7.36</dep.slf4j.version>
         <dep.hadoop.version>3.3.5</dep.hadoop.version>
@@ -413,7 +413,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.5.2</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
