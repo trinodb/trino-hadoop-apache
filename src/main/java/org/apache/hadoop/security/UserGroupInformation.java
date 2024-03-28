@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.security;
 
+import static java.util.Objects.requireNonNull;
 import static org.apache.hadoop.fs.CommonConfigurationKeys.HADOOP_USER_GROUP_METRICS_PERCENTILES_INTERVALS;
 import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_KERBEROS_MIN_SECONDS_BEFORE_RELOGIN;
 import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_KERBEROS_MIN_SECONDS_BEFORE_RELOGIN_DEFAULT;
@@ -25,6 +26,7 @@ import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_KERBEROS
 import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_TOKEN_FILES;
 import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_TOKENS;
 import static org.apache.hadoop.security.UGIExceptionMessages.*;
+import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod.KERBEROS;
 import static org.apache.hadoop.util.PlatformName.IBM_JAVA;
 import static org.apache.hadoop.util.StringUtils.getTrimmedStringCollection;
 
@@ -1856,7 +1858,7 @@ public class UserGroupInformation {
      * Get the underlying subject from this ugi.
      * @return the subject that represents this user.
      */
-    protected Subject getSubject() {
+    public Subject getSubject() {
         return subject;
     }
 
@@ -2232,6 +2234,25 @@ public class UserGroupInformation {
                     ? keytabPath
                     : "file://" + keytabPath;
         }
+    }
+
+    public static UserGroupInformation createUserGroupInformationForSubject(Subject subject)
+    {
+        requireNonNull(subject, "subject is null");
+        Set<KerberosPrincipal> kerberosPrincipals = subject.getPrincipals(KerberosPrincipal.class);
+        if (kerberosPrincipals.isEmpty()) {
+            throw new IllegalArgumentException("subject must contain a KerberosPrincipal");
+        }
+        if (kerberosPrincipals.size() != 1) {
+            throw new IllegalArgumentException("subject must contain only a single KerberosPrincipal");
+        }
+
+        KerberosPrincipal principal = kerberosPrincipals.iterator().next();
+        User user = new User(principal.getName(), KERBEROS, null);
+        subject.getPrincipals().add(user);
+        UserGroupInformation userGroupInformation = new UserGroupInformation(subject);
+        userGroupInformation.setAuthenticationMethod(KERBEROS);
+        return userGroupInformation;
     }
 
     /**
