@@ -13,20 +13,14 @@
  */
 package io.trino.hadoop;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.compress.CompressionCodec;
-import org.apache.hadoop.io.compress.CompressionCodecFactory;
 import org.apache.hadoop.util.NativeCodeLoader;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-
-import static org.apache.hadoop.io.compress.CompressionCodecFactory.getCodecClasses;
 
 public final class HadoopNative
 {
@@ -45,7 +39,7 @@ public final class HadoopNative
         }
         try {
             loadLibrary("hadoop");
-            setStatic(NativeCodeLoader.class.getDeclaredField("nativeCodeLoaded"), true);
+            NativeCodeLoader.setNativeCodeLoaded();
 
             loaded = true;
         }
@@ -53,13 +47,6 @@ public final class HadoopNative
             error = t;
             throw new RuntimeException("failed to load Hadoop native library", error);
         }
-    }
-
-    private static void setStatic(Field field, Object value)
-            throws IllegalAccessException
-    {
-        field.setAccessible(true);
-        field.set(null, value);
     }
 
     private static void loadLibrary(String name)
