@@ -205,64 +205,8 @@
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-daemon</groupId>
-                    <artifactId>commons-daemon</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-el</groupId>
-                    <artifactId>commons-el</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.fusesource.leveldbjni</groupId>
-                    <artifactId>leveldbjni-all</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.jersey</groupId>
-                    <artifactId>jersey-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.jersey</groupId>
-                    <artifactId>jersey-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>javax.servlet-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-util-ajax</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-util</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>netty</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-reload4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>ch.qos.reload4j</groupId>
-                    <artifactId>reload4j</artifactId>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -509,10 +453,6 @@
                                     <shadedPattern>${shadeBase}.org.apache.http.mozilla</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>io.netty</pattern>
-                                    <shadedPattern>${shadeBase}.io.netty</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>org.eclipse.jetty</pattern>
                                     <shadedPattern>${shadeBase}.org.eclipse.jetty</shadedPattern>
                                 </relocation>
@@ -606,18 +546,6 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>io.netty:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/io.netty.versions.properties</exclude>
-                                        <exclude>META-INF/native-image/**</exclude>
-                                        <exclude>META-INF/native/**</exclude>
-                                        <exclude>META-INF/services/**</exclude>
-                                        <exclude>com/sun/nio/sctp/**</exclude>
-                                        <exclude>*.c</exclude>
-                                        <exclude>*.h</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
                                     <artifact>com.fasterxml.jackson.*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/services/**</exclude>
@@ -684,6 +612,12 @@
                                         <exclude>org/apache/hadoop/crypto/key/kms/KMSClientProvider.class</exclude>
                                         <exclude>org/apache/hadoop/crypto/key/kms/KMSClientProvider$*.class</exclude>
                                     </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.apache.hadoop:hadoop-hdfs</artifact>
+                                    <includes>
+                                        <include>hdfs-default.xml</include>
+                                    </includes>
                                 </filter>
                                 <filter>
                                     <artifact>org.apache.hadoop:hadoop-mapreduce-client-core</artifact>
