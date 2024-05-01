@@ -327,7 +327,13 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>32.0.0-jre</version>
+            <version>33.1.0-jre</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>listenablefuture</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -477,6 +483,11 @@
                             <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
                             <artifactSet>
                                 <excludes>
+                                    <exclude>com.google.errorprone:error_prone_annotations</exclude>
+                                    <exclude>com.google.guava:failureaccess</exclude>
+                                    <exclude>com.google.guava:guava</exclude>
+                                    <exclude>com.google.j2objc:j2objc-annotations</exclude>
+                                    <exclude>org.checkerframework:checker-qual</exclude>
                                     <exclude>org.xerial.snappy:snappy-java</exclude>
                                     <exclude>org.lz4:lz4-java</exclude>
                                     <exclude>com.squareup.okhttp3:okhttp</exclude>
@@ -524,23 +535,6 @@
                                 <relocation>
                                     <pattern>org.wildfly.openssl</pattern>
                                     <shadedPattern>${shadeBase}.org.wildfly.openssl</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.google.common</pattern>
-                                    <shadedPattern>${shadeBase}.com.google.common</shadedPattern>
-                                </relocation>
-                                <!-- this comes from com.google.guava -->
-                                <relocation>
-                                    <pattern>com.google.thirdparty</pattern>
-                                    <shadedPattern>${shadeBase}.com.google.thirdparty</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.google.j2objc</pattern>
-                                    <shadedPattern>${shadeBase}.com.google.j2objc</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.google.errorprone</pattern>
-                                    <shadedPattern>${shadeBase}.com.google.j2objc</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.google.protobuf</pattern>
@@ -591,14 +585,6 @@
                                 <relocation>
                                     <pattern>javax.activation</pattern>
                                     <shadedPattern>${shadeBase}.javax.activation</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.checkerframework</pattern>
-                                    <shadedPattern>${shadeBase}.org.checkerframework</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.codehaus.mojo</pattern>
-                                    <shadedPattern>${shadeBase}.org.codehaus.mojo</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
