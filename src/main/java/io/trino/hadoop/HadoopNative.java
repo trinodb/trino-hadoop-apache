@@ -47,27 +47,11 @@ public final class HadoopNative
             loadLibrary("hadoop");
             setStatic(NativeCodeLoader.class.getDeclaredField("nativeCodeLoaded"), true);
 
-            // verify that all configured codec classes can be loaded
-            loadAllCodecs();
-
             loaded = true;
         }
         catch (Throwable t) {
             error = t;
             throw new RuntimeException("failed to load Hadoop native library", error);
-        }
-    }
-
-    private static void loadAllCodecs()
-    {
-        Configuration conf = new Configuration();
-        CompressionCodecFactory factory = new CompressionCodecFactory(conf);
-        for (Class<? extends CompressionCodec> clazz : getCodecClasses(conf)) {
-            CompressionCodec codec = factory.getCodecByClassName(clazz.getName());
-            if (codec == null) {
-                throw new RuntimeException("failed to load codec: " + clazz.getName());
-            }
-            codec.getDecompressorType();
         }
     }
 
