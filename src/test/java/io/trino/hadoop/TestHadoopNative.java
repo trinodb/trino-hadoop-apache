@@ -70,7 +70,6 @@ public class TestHadoopNative
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         try (OutputStream out = codec.createOutputStream(bytes)) {
             out.write(input);
-            out.close();
         }
         return bytes.toByteArray();
     }
