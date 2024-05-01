@@ -16,8 +16,11 @@ package io.trino.hadoop;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.CompressionCodecFactory;
+import org.apache.hadoop.io.compress.ZStandardCodec;
 import org.apache.hadoop.io.compress.bzip2.Bzip2Factory;
 import org.apache.hadoop.io.compress.zlib.ZlibFactory;
+import org.apache.hadoop.io.compress.zstd.ZStandardCompressor;
+import org.apache.hadoop.io.compress.zstd.ZStandardDecompressor;
 import org.apache.hadoop.util.NativeCodeLoader;
 import org.testng.annotations.Test;
 
@@ -30,8 +33,10 @@ import java.io.OutputStream;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.hadoop.io.compress.CompressionCodecFactory.getCodecClasses;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 public class TestHadoopNative
 {
@@ -41,9 +46,9 @@ public class TestHadoopNative
         HadoopNative.requireHadoopNative();
 
         assertTrue(NativeCodeLoader.isNativeCodeLoaded());
-        assertTrue(NativeCodeLoader.buildSupportsZstd());
         assertTrue(ZlibFactory.isNativeZlibLoaded(new Configuration()));
         assertTrue(Bzip2Factory.isNativeBzip2Loaded(new Configuration()));
+        assertFalse(ZStandardCodec.isNativeCodeLoaded());
     }
 
     @Test
@@ -57,6 +62,24 @@ public class TestHadoopNative
         for (Class<? extends CompressionCodec> clazz : getCodecClasses(conf)) {
             CompressionCodec codec = factory.getCodecByClassName(clazz.getName());
             assertNotNull(codec, clazz.getName());
+
+            if (codec instanceof ZStandardCodec) {
+                try {
+                    codec.createCompressor();
+                    fail("expected exception");
+                }
+                catch (RuntimeException e) {
+                    assertTrue(e.getMessage().contains("native zStandard library not available"));
+                }
+                try {
+                    codec.createDecompressor();
+                    fail("expected exception");
+                }
+                catch (RuntimeException e) {
+                    assertTrue(e.getMessage().contains("native zStandard library not available"));
+                }
+                continue;
+            }
 
             byte[] expected = "Hello world! Goodbye world!".getBytes(UTF_8);
             byte[] actual = decompress(codec, compress(codec, expected));

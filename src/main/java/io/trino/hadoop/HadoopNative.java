@@ -13,6 +13,9 @@
  */
 package io.trino.hadoop;
 
+import com.google.common.reflect.Reflection;
+import org.apache.hadoop.io.compress.zstd.ZStandardCompressor;
+import org.apache.hadoop.io.compress.zstd.ZStandardDecompressor;
 import org.apache.hadoop.util.NativeCodeLoader;
 
 import java.io.File;
@@ -38,6 +41,10 @@ public final class HadoopNative
             throw new RuntimeException("failed to load Hadoop native library", error);
         }
         try {
+            // force initialization early to avoid loading the native library
+            Reflection.initialize(ZStandardCompressor.class);
+            Reflection.initialize(ZStandardDecompressor.class);
+
             loadLibrary("hadoop");
             NativeCodeLoader.setNativeCodeLoaded();
 
