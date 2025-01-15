@@ -445,6 +445,10 @@
                             </transformers>
                             <relocations>
                                 <relocation>
+                                    <pattern>org.apache.hadoop.ipc</pattern>
+                                    <shadedPattern>${shadeBase}.org.apache.hadoop.ipc</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>org.apache.http</pattern>
                                     <shadedPattern>${shadeBase}.org.apache.http</shadedPattern>
                                 </relocation>
