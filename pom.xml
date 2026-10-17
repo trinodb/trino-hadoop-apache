@@ -292,6 +292,36 @@
             <version>1.8.0</version>
         </dependency>
 
+        <!--
+            Explicit overrides for CVE-2024-47561 (Avro arbitrary code execution via schema
+            parsing, fixed in 1.11.4) and CVE-2026-54512/-54513 (jackson-databind DoS via
+            stringified-number/XML-datatype deserialization, fixed in 2.18.8/2.21.6/2.22.2 and
+            2.18.11/2.21.7/2.22.3 respectively). hadoop-project (the Hadoop 3.3.5 BOM this module
+            inherits avro/jackson2 versions from) pins avro.version=1.7.7,
+            jackson2.version=2.12.7, jackson2.databind.version=2.12.7.1 -- all three are years
+            past these fix versions. Same override pattern already used above for
+            snappy-java/lz4-java: a direct dependency here wins over the transitive version
+            hadoop-common pulls in, and the existing shade-plugin relocation for
+            com.fasterxml.jackson/org.codehaus.jackson applies to any version by package name.
+        -->
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>1.11.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.18.11</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.18.11</version>
+        </dependency>
+
         <!-- discard all logging from Hadoop -->
         <dependency>
             <groupId>org.slf4j</groupId>
