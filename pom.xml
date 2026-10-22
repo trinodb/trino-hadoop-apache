@@ -422,6 +422,11 @@
                                     <exclude>com.squareup.okio:okio</exclude>
                                     <exclude>org.jetbrains.kotlin:kotlin-stdlib</exclude>
                                     <exclude>org.jetbrains.kotlin:kotlin-stdlib-common</exclude>
+                                    <exclude>commons-*:*</exclude>
+                                    <exclude>org.apache.commons:*</exclude>
+                                    <exclude>com.fasterxml.jackson.core:jackson-annotations</exclude>
+                                    <exclude>com.fasterxml.jackson.core:jackson-core</exclude>
+                                    <exclude>com.fasterxml.jackson.core:jackson-databind</exclude>
                                 </excludes>
                             </artifactSet>
                             <transformers>
@@ -437,8 +442,8 @@
                                     <shadedPattern>${shadeBase}.org.apache.http.mozilla</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>org.apache.commons</pattern>
-                                    <shadedPattern>${shadeBase}.org.apache.commons</shadedPattern>
+                                    <pattern>org.apache.commons.logging</pattern>
+                                    <shadedPattern>${shadeBase}.org.apache.commons.logging</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apache.kerby</pattern>
@@ -455,10 +460,6 @@
                                 <relocation>
                                     <pattern>com.google.re2j</pattern>
                                     <shadedPattern>${shadeBase}.com.google.re2j</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.fasterxml.jackson</pattern>
-                                    <shadedPattern>${shadeBase}.com.fasterxml.jackson</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.ctc.wstx</pattern>
@@ -510,12 +511,6 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>com.fasterxml.jackson.*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/services/**</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
                                     <artifact>com.fasterxml.woodstox:woodstox-core</artifact>
                                     <excludes>
                                         <exclude>META-INF/services/**</exclude>
@@ -525,12 +520,6 @@
                                     <artifact>jakarta.activation:jakarta.activation-api</artifact>
                                     <excludes>
                                         <exclude>pom.xml</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.apache.commons:commons-configuration2</artifact>
-                                    <excludes>
-                                        <exclude>*.dtd</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
