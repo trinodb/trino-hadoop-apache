@@ -498,9 +498,6 @@
                                     <excludes>
                                         <exclude>META-INF/maven/**</exclude>
                                         <exclude>META-INF/versions/**</exclude>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
                                         <exclude>module-info.java</exclude>
                                     </excludes>
                                 </filter>
@@ -539,13 +536,7 @@
                                 <filter>
                                     <artifact>org.apache.hadoop:hadoop-common</artifact>
                                     <excludes>
-                                        <exclude>*.h</exclude>
-                                        <exclude>org/apache/hadoop/fs/FileSystem.class</exclude>
                                         <exclude>org/apache/hadoop/fs/FileSystem$*.class</exclude>
-                                        <exclude>org/apache/hadoop/util/NativeCodeLoader.class</exclude>
-                                        <exclude>org/apache/hadoop/security/UserGroupInformation.class</exclude>
-                                        <exclude>org/apache/hadoop/security/UserGroupInformation$*.class</exclude>
-                                        <exclude>org/apache/hadoop/crypto/key/kms/KMSClientProvider.class</exclude>
                                         <exclude>org/apache/hadoop/crypto/key/kms/KMSClientProvider$*.class</exclude>
                                     </excludes>
                                 </filter>
@@ -553,18 +544,6 @@
                                     <artifact>org.apache.hadoop:hadoop-hdfs</artifact>
                                     <includes>
                                         <include>hdfs-default.xml</include>
-                                    </includes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.apache.hadoop:hadoop-mapreduce-client-core</artifact>
-                                    <excludes>
-                                        <exclude>mapred-default.xml.orig</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>${project.groupId}:${project.artifactId}</artifact>
-                                    <includes>
-                                        <include>**</include>
                                     </includes>
                                 </filter>
                             </filters>
