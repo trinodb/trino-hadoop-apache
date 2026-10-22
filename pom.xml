@@ -449,6 +449,7 @@
                                     <exclude>org.apache.httpcomponents:httpcore</exclude>
                                     <exclude>com.fasterxml.woodstox:woodstox-core</exclude>
                                     <exclude>org.codehaus.woodstox:stax2-api</exclude>
+                                    <exclude>org.apache.kerby:*</exclude>
                                 </excludes>
                             </artifactSet>
                             <transformers>
@@ -458,10 +459,6 @@
                                 <relocation>
                                     <pattern>org.apache.commons.logging</pattern>
                                     <shadedPattern>${shadeBase}.org.apache.commons.logging</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.apache.kerby</pattern>
-                                    <shadedPattern>${shadeBase}.org.apache.kerby</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.google.protobuf</pattern>
