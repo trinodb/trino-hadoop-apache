@@ -52,6 +52,10 @@
             <version>${dep.hadoop.version}</version>
             <exclusions>
                 <exclusion>
+                    <groupId>jakarta.activation</groupId>
+                    <artifactId>jakarta.activation-api</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.apache.avro</groupId>
                     <artifactId>avro</artifactId>
                 </exclusion>
@@ -221,6 +225,10 @@
             <version>${dep.hadoop.version}</version>
             <scope>runtime</scope>
             <exclusions>
+                <exclusion>
+                    <groupId>jakarta.activation</groupId>
+                    <artifactId>jakarta.activation-api</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.apache.avro</groupId>
                     <artifactId>avro</artifactId>
@@ -465,11 +473,6 @@
                                     <pattern>javax.annotation</pattern>
                                     <shadedPattern>${shadeBase}.javax.annotation</shadedPattern>
                                 </relocation>
-                                <!-- this comes from jakarta.activation -->
-                                <relocation>
-                                    <pattern>javax.activation</pattern>
-                                    <shadedPattern>${shadeBase}.javax.activation</shadedPattern>
-                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
@@ -487,12 +490,6 @@
                                     <artifact>org.slf4j:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/services/**</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>jakarta.activation:jakarta.activation-api</artifact>
-                                    <excludes>
-                                        <exclude>pom.xml</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
