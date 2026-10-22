@@ -253,30 +253,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-azure</artifactId>
-            <version>${dep.hadoop.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.wildfly.openssl</groupId>
-                    <artifactId>wildfly-openssl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-azure-datalake</artifactId>
-            <version>${dep.hadoop.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.wildfly.openssl</groupId>
-                    <artifactId>wildfly-openssl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>33.1.0-jre</version>
@@ -461,24 +437,12 @@
                                     <shadedPattern>${shadeBase}.org.apache.http.mozilla</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>org.eclipse.jetty</pattern>
-                                    <shadedPattern>${shadeBase}.org.eclipse.jetty</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.microsoft.azure</pattern>
-                                    <shadedPattern>${shadeBase}.com.microsoft.azure</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>org.apache.commons</pattern>
                                     <shadedPattern>${shadeBase}.org.apache.commons</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apache.kerby</pattern>
                                     <shadedPattern>${shadeBase}.org.apache.kerby</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.wildfly.openssl</pattern>
-                                    <shadedPattern>${shadeBase}.org.wildfly.openssl</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.google.protobuf</pattern>
@@ -570,19 +534,6 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>org.eclipse.jetty:jetty-util</artifact>
-                                    <excludes>
-                                        <exclude>about.html</exclude>
-                                        <exclude>jetty-dir.css</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.eclipse.jetty:jetty-util-ajax</artifact>
-                                    <excludes>
-                                        <exclude>about.html</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
                                     <artifact>org.apache.kerby:kerb-simplekdc</artifact>
                                     <excludes>
                                         <exclude>krb5-template.conf</exclude>
@@ -594,12 +545,6 @@
                                     <excludes>
                                         <exclude>ccache.txt</exclude>
                                         <exclude>keytab.txt</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>com.microsoft.azure:azure-data-lake-store-sdk</artifact>
-                                    <excludes>
-                                        <exclude>com/microsoft/azure/datalake/store/HttpTransport.class</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
