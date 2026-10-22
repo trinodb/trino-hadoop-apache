@@ -490,8 +490,6 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/maven/**</exclude>
-                                        <exclude>META-INF/versions/**</exclude>
-                                        <exclude>module-info.java</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
