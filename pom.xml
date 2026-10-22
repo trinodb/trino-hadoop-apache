@@ -52,6 +52,10 @@
             <version>${dep.hadoop.version}</version>
             <exclusions>
                 <exclusion>
+                    <groupId>org.apache.kerby</groupId>
+                    <artifactId>kerb-simplekdc</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>jakarta.activation</groupId>
                     <artifactId>jakarta.activation-api</artifactId>
                 </exclusion>
@@ -225,6 +229,10 @@
             <version>${dep.hadoop.version}</version>
             <scope>runtime</scope>
             <exclusions>
+                <exclusion>
+                    <groupId>org.apache.kerby</groupId>
+                    <artifactId>kerb-simplekdc</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>jakarta.activation</groupId>
                     <artifactId>jakarta.activation-api</artifactId>
@@ -490,20 +498,6 @@
                                     <artifact>org.slf4j:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/services/**</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.apache.kerby:kerb-simplekdc</artifact>
-                                    <excludes>
-                                        <exclude>krb5-template.conf</exclude>
-                                        <exclude>krb5_udp-template.conf</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.apache.kerby:kerb-util</artifact>
-                                    <excludes>
-                                        <exclude>ccache.txt</exclude>
-                                        <exclude>keytab.txt</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
