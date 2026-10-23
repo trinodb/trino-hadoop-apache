@@ -17,7 +17,6 @@
  */
 package org.apache.hadoop.fs;
 
-import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -4587,8 +4586,8 @@ public abstract class FileSystem extends Configured
    */
   @InterfaceStability.Unstable
   protected static FSDataOutputStreamBuilder createDataOutputStreamBuilder(
-      @Nonnull final FileSystem fileSystem,
-      @Nonnull final Path path) {
+      final FileSystem fileSystem,
+      final Path path) {
     return new FileSystemDataOutputStreamBuilder(fileSystem, path);
   }
 
@@ -4795,8 +4794,8 @@ public abstract class FileSystem extends Configured
   @InterfaceAudience.LimitedPrivate("Filesystems")
   @InterfaceStability.Unstable
   protected static FSDataInputStreamBuilder createDataInputStreamBuilder(
-      @Nonnull final FileSystem fileSystem,
-      @Nonnull final Path path) {
+      final FileSystem fileSystem,
+      final Path path) {
     return new FSDataInputStreamBuilder(fileSystem, path);
   }
 
@@ -4810,8 +4809,8 @@ public abstract class FileSystem extends Configured
   @InterfaceAudience.LimitedPrivate("Filesystems")
   @InterfaceStability.Unstable
   protected static FSDataInputStreamBuilder createDataInputStreamBuilder(
-      @Nonnull final FileSystem fileSystem,
-      @Nonnull final PathHandle pathHandle) {
+      final FileSystem fileSystem,
+      final PathHandle pathHandle) {
     return new FSDataInputStreamBuilder(fileSystem, pathHandle);
   }
 
@@ -4829,8 +4828,8 @@ public abstract class FileSystem extends Configured
      * @param path path to open.
      */
     protected FSDataInputStreamBuilder(
-        @Nonnull final FileSystem fileSystem,
-        @Nonnull final Path path) {
+        final FileSystem fileSystem,
+        final Path path) {
       super(fileSystem, path);
     }
 
@@ -4840,8 +4839,8 @@ public abstract class FileSystem extends Configured
      * @param pathHandle path handle of file to open.
      */
     protected FSDataInputStreamBuilder(
-        @Nonnull final FileSystem fileSystem,
-        @Nonnull final PathHandle pathHandle) {
+        final FileSystem fileSystem,
+        final PathHandle pathHandle) {
       super(fileSystem, pathHandle);
     }
 
