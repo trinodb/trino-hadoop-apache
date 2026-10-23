@@ -52,6 +52,10 @@
             <version>${dep.hadoop.version}</version>
             <exclusions>
                 <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.apache.kerby</groupId>
                     <artifactId>kerb-simplekdc</artifactId>
                 </exclusion>
@@ -230,6 +234,10 @@
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.apache.kerby</groupId>
                     <artifactId>kerb-simplekdc</artifactId>
                 </exclusion>
@@ -276,6 +284,10 @@
                 <exclusion>
                     <groupId>com.google.guava</groupId>
                     <artifactId>listenablefuture</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -475,11 +487,6 @@
                                 <relocation>
                                     <pattern>org.slf4j</pattern>
                                     <shadedPattern>${shadeBase}.org.slf4j</shadedPattern>
-                                </relocation>
-                                <!-- from com.google.code.findbugs: -->
-                                <relocation>
-                                    <pattern>javax.annotation</pattern>
-                                    <shadedPattern>${shadeBase}.javax.annotation</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
