@@ -30,16 +30,14 @@ import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMeth
 import static org.apache.hadoop.util.PlatformName.IBM_JAVA;
 import static org.apache.hadoop.util.StringUtils.getTrimmedStringCollection;
 
-import org.apache.hadoop.thirdparty.com.google.common.annotations.VisibleForTesting;
+import org.apache.hadoop.classification.VisibleForTesting;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.security.Principal;
-import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -50,11 +48,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -531,6 +529,18 @@ public class UserGroupInformation {
         user.setLogin(login);
     }
 
+    /** This method checks for a successful Kerberos login
+     * and returns true by default if it is not using Kerberos.
+     *
+     * @return true on successful login
+     */
+    public boolean isLoginSuccess() {
+        LoginContext login = user.getLogin();
+        return (login instanceof HadoopLoginContext)
+                ? ((HadoopLoginContext) login).isLoginSuccess()
+                : true;
+    }
+
     /**
      * Set the last login time for logged in user
      * @param loginTime the number of milliseconds since the beginning of time
@@ -635,7 +645,7 @@ public class UserGroupInformation {
      *
      * @throws IOException raised on errors performing I/O.
      * @throws KerberosAuthException if the kerberos login fails
-     * @return UserGroupInformation.
+     * @return UserGroupInformation
      */
     public static UserGroupInformation getUGIFromSubject(Subject subject)
             throws IOException {
@@ -690,7 +700,7 @@ public class UserGroupInformation {
      * remove the login method that is followed by a space from the username
      * e.g. "jack (auth:SIMPLE)" {@literal ->} "jack"
      *
-     * @param userName input userName.
+     * @param userName userName.
      * @return userName without login method
      */
     public static String trimLoginMethod(String userName) {
@@ -1278,6 +1288,23 @@ public class UserGroupInformation {
     }
 
     /**
+     * Force re-Login a user in from the ticket cache irrespective of the last
+     * login time. This method assumes that login had happened already. The
+     * Subject field of this UserGroupInformation object is updated to have the
+     * new credentials.
+     *
+     * @throws IOException
+     *           raised on errors performing I/O.
+     * @throws KerberosAuthException
+     *           on a failure
+     */
+    @InterfaceAudience.Public
+    @InterfaceStability.Evolving
+    public void forceReloginFromTicketCache() throws IOException {
+        reloginFromTicketCache(true);
+    }
+
+    /**
      * Re-Login a user in from the ticket cache.  This
      * method assumes that login had happened already.
      * The Subject field of this UserGroupInformation object is updated to have
@@ -1288,6 +1315,11 @@ public class UserGroupInformation {
     @InterfaceAudience.Public
     @InterfaceStability.Evolving
     public void reloginFromTicketCache() throws IOException {
+        reloginFromTicketCache(false);
+    }
+
+    private void reloginFromTicketCache(boolean ignoreLastLoginTime)
+            throws IOException {
         if (!shouldRelogin() || !isFromTicket()) {
             return;
         }
@@ -1295,7 +1327,7 @@ public class UserGroupInformation {
         if (login == null) {
             throw new KerberosAuthException(MUST_FIRST_LOGIN);
         }
-        relogin(login, false);
+        relogin(login, ignoreLastLoginTime);
     }
 
     private void relogin(HadoopLoginContext login, boolean ignoreLastLoginTime)
@@ -1411,9 +1443,8 @@ public class UserGroupInformation {
     /**
      * Create a user from a login name. It is intended to be used for remote
      * users in RPC, since it won't have any credentials.
-     *
      * @param user the full user principal name, must not be empty or null
-     * @param authMethod input authMethod.
+     * @param authMethod authMethod.
      * @return the UserGroupInformation for the remote user.
      */
     @InterfaceAudience.Public
@@ -1483,9 +1514,8 @@ public class UserGroupInformation {
     /**
      * Create a proxy user using username of the effective user and the ugi of the
      * real user.
-     *
-     * @param user input user.
-     * @param realUser input realUser.
+     * @param user user.
+     * @param realUser realUser.
      * @return proxyUser ugi
      */
     @InterfaceAudience.Public
@@ -1537,8 +1567,8 @@ public class UserGroupInformation {
      * map that has the translation of usernames to groups.
      */
     private static class TestingGroups extends Groups {
-        private final Map<String, List<String>> userToGroupsMapping =
-                new HashMap<String,List<String>>();
+        private final Map<String, Set<String>> userToGroupsMapping =
+                new HashMap<>();
         private Groups underlyingImplementation;
 
         private TestingGroups(Groups underlyingImplementation) {
@@ -1548,17 +1578,22 @@ public class UserGroupInformation {
 
         @Override
         public List<String> getGroups(String user) throws IOException {
-            List<String> result = userToGroupsMapping.get(user);
+            return new ArrayList<>(getGroupsSet(user));
+        }
 
+        @Override
+        public Set<String> getGroupsSet(String user) throws IOException {
+            Set<String> result = userToGroupsMapping.get(user);
             if (result == null) {
-                result = underlyingImplementation.getGroups(user);
+                result = underlyingImplementation.getGroupsSet(user);
             }
-
             return result;
         }
 
         private void setUserGroups(String user, String[] groups) {
-            userToGroupsMapping.put(user, Arrays.asList(groups));
+            Set<String> groupsSet = new LinkedHashSet<>();
+            Collections.addAll(groupsSet, groups);
+            userToGroupsMapping.put(user, groupsSet);
         }
     }
 
@@ -1617,11 +1652,11 @@ public class UserGroupInformation {
     }
 
     public String getPrimaryGroupName() throws IOException {
-        List<String> groups = getGroups();
-        if (groups.isEmpty()) {
+        Set<String> groupsSet = getGroupsSet();
+        if (groupsSet.isEmpty()) {
             throw new IOException("There is no primary group for UGI " + this);
         }
-        return groups.get(0);
+        return groupsSet.iterator().next();
     }
 
     /**
@@ -1734,21 +1769,24 @@ public class UserGroupInformation {
     }
 
     /**
-     * Get the group names for this user. {@link #getGroups()} is less
+     * Get the group names for this user. {@link #getGroupsSet()} is less
      * expensive alternative when checking for a contained element.
      * @return the list of users with the primary group first. If the command
      *    fails, it returns an empty list.
      */
     public String[] getGroupNames() {
-        List<String> groups = getGroups();
-        return groups.toArray(new String[groups.size()]);
+        Collection<String> groupsSet = getGroupsSet();
+        return groupsSet.toArray(new String[groupsSet.size()]);
     }
 
     /**
-     * Get the group names for this user.
+     * Get the group names for this user. {@link #getGroupsSet()} is less
+     * expensive alternative when checking for a contained element.
      * @return the list of users with the primary group first. If the command
      *    fails, it returns an empty list.
+     * @deprecated Use {@link #getGroupsSet()} instead.
      */
+    @Deprecated
     public List<String> getGroups() {
         ensureInitialized();
         try {
@@ -1756,6 +1794,21 @@ public class UserGroupInformation {
         } catch (IOException ie) {
             LOG.debug("Failed to get groups for user {}", getShortUserName(), ie);
             return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Get the groups names for the user as a Set.
+     * @return the set of users with the primary group first. If the command
+     *     fails, it returns an empty set.
+     */
+    public Set<String> getGroupsSet() {
+        ensureInitialized();
+        try {
+            return groups.getGroupsSet(getShortUserName());
+        } catch (IOException ie) {
+            LOG.debug("Failed to get groups for user {}", getShortUserName(), ie);
+            return Collections.emptySet();
         }
     }
 
@@ -1773,9 +1826,9 @@ public class UserGroupInformation {
     }
 
     /**
-     * Sets the authentication method in the subject.
+     * Sets the authentication method in the subject
      *
-     * @param authMethod input authMethod.
+     * @param authMethod authMethod.
      */
     public synchronized
     void setAuthenticationMethod(AuthenticationMethod authMethod) {
@@ -1783,9 +1836,9 @@ public class UserGroupInformation {
     }
 
     /**
-     * Sets the authentication method in the subject.
+     * Sets the authentication method in the subject
      *
-     * @param authMethod input authMethod.
+     * @param authMethod authMethod.
      */
     public void setAuthenticationMethod(AuthMethod authMethod) {
         user.setAuthenticationMethod(AuthenticationMethod.valueOf(authMethod));
@@ -1818,7 +1871,7 @@ public class UserGroupInformation {
      * Returns the authentication method of a ugi. If the authentication method is
      * PROXY, returns the authentication method of the real user.
      *
-     * @param ugi input ugi.
+     * @param ugi ugi.
      * @return AuthenticationMethod
      */
     public static AuthenticationMethod getRealAuthenticationMethod(
@@ -1921,29 +1974,27 @@ public class UserGroupInformation {
 
     /**
      * Log current UGI and token information into specified log.
-     *
-     * @param log input log.
-     * @param caption input caption.
-     * @param ugi - UGI.
-     * @throws IOException raised on errors performing I/O.
+     * @param ugi - UGI
+     * @param log log.
+     * @param caption caption.
      */
     @InterfaceAudience.LimitedPrivate({"HDFS", "KMS"})
     @InterfaceStability.Unstable
     public static void logUserInfo(Logger log, String caption,
-                                   UserGroupInformation ugi) throws IOException {
+            UserGroupInformation ugi) {
         if (log.isDebugEnabled()) {
             log.debug(caption + " UGI: " + ugi);
-            for (Token<?> token : ugi.getTokens()) {
-                log.debug("+token:" + token);
+            for (Map.Entry<Text, Token<? extends TokenIdentifier>> kv :
+                    ugi.getCredentials().getTokenMap().entrySet()) {
+                log.debug("+token: {} -> {}", kv.getKey(), kv.getValue());
             }
         }
     }
 
     /**
      * Log all (current, real, login) UGI and token info into specified log.
-     *
-     * @param log input log.
      * @param ugi - UGI
+     * @param log - log.
      * @throws IOException raised on errors performing I/O.
      */
     @InterfaceAudience.LimitedPrivate({"HDFS", "KMS"})
@@ -2011,6 +2062,12 @@ public class UserGroupInformation {
             }
             return ugi;
         } catch (LoginException le) {
+            String msg = le.getMessage();
+            if (msg != null && msg.contains("invalid null input")) {
+                // This error from the JDK indicates that the OS couldn't map the UID of this process to an
+                // actual user. Throw this as an IOException, because it's not related to Kerberos.
+                throw new IOException(INVALID_UID, le);
+            }
             KerberosAuthException kae =
                     new KerberosAuthException(FAILURE_TO_LOGIN, le);
             if (params != null) {
@@ -2065,6 +2122,11 @@ public class UserGroupInformation {
             super(appName, subject, null, conf);
             this.appName = appName;
             this.conf = conf;
+        }
+
+        /** Get the login status. */
+        public boolean isLoginSuccess() {
+            return isLoggedIn.get();
         }
 
         String getAppName() {
@@ -2259,7 +2321,7 @@ public class UserGroupInformation {
      * A test method to print out the current user's UGI.
      * @param args if there are two arguments, read the user from the keytab
      * and print it out.
-     * @throws Exception if any error occurs.
+     * @throws Exception Exception.
      */
     public static void main(String [] args) throws Exception {
         System.out.println("Getting UGI for current user");
