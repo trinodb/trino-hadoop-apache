@@ -10,7 +10,7 @@
 
     <groupId>io.trino.hadoop</groupId>
     <artifactId>hadoop-apache</artifactId>
-    <version>3.3.5-5-SNAPSHOT</version>
+    <version>3.4.3-1-SNAPSHOT</version>
 
     <name>hadoop-apache</name>
     <description>Shaded version of Apache Hadoop for Trino</description>
@@ -58,9 +58,19 @@
         <project.build.targetJdk>21</project.build.targetJdk>
         <shadeBase>io.trino.hadoop.\$internal</shadeBase>
         <dep.slf4j.version>1.7.36</dep.slf4j.version>
-        <dep.hadoop.version>3.3.5</dep.hadoop.version>
+        <dep.hadoop.version>3.4.3</dep.hadoop.version>
         <dep.plugin.njord.version>0.9.10</dep.plugin.njord.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.16.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -68,6 +78,10 @@
             <artifactId>hadoop-common</artifactId>
             <version>${dep.hadoop.version}</version>
             <exclusions>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
@@ -251,6 +265,10 @@
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
                 </exclusion>
@@ -277,10 +295,6 @@
                 <exclusion>
                     <groupId>com.google.inject.extensions</groupId>
                     <artifactId>guice-servlet</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>netty</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -479,6 +493,9 @@
                                     <exclude>com.fasterxml.woodstox:woodstox-core</exclude>
                                     <exclude>org.codehaus.woodstox:stax2-api</exclude>
                                     <exclude>org.apache.kerby:*</exclude>
+                                    <exclude>org.bouncycastle:*</exclude>
+                                    <exclude>io.dropwizard.metrics:*</exclude>
+                                    <exclude>org.codehaus.jettison:*</exclude>
                                 </excludes>
                             </artifactSet>
                             <transformers>
@@ -524,6 +541,13 @@
                                     <excludes>
                                         <exclude>org/apache/hadoop/fs/FileSystem$*.class</exclude>
                                         <exclude>org/apache/hadoop/crypto/key/kms/KMSClientProvider$*.class</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.apache.hadoop.thirdparty:hadoop-shaded-guava</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/versions/9/module-info.class</exclude>
+                                        <exclude>org/jspecify/**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
