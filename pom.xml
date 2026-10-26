@@ -65,9 +65,27 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.22</version>
+            </dependency>
+
+            <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.16.1</version>
+                <version>1.23.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.22.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.28.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -364,9 +382,16 @@
 
         <!-- for testing -->
         <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>2.0.5</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.2.1</version>
+            <version>6.14.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -391,7 +416,7 @@
                         <requireUpperBoundDeps />
                         <banDuplicatePomDependencyVersions />
                         <requireMavenVersion>
-                            <version>3.5.0</version>
+                            <version>3.6.3</version>
                         </requireMavenVersion>
                         <requireJavaVersion>
                             <version>${project.build.targetJdk}</version>
@@ -413,9 +438,30 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.6.1</version>
                 <configuration>
                     <trimStackTrace>false</trimStackTrace>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <classesDirectory>${project.build.directory}/${project.build.finalName}.jar</classesDirectory>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExclude>org.apache.hadoop:*</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.apache.hadoop.thirdparty:*</classpathDependencyExclude>
+                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
 
@@ -609,6 +655,7 @@
             <id>oss-release</id>
             <properties>
                 <skipTests>true</skipTests>
+                <skipITs>true</skipITs>
                 <njord.publisher>sonatype-cp</njord.publisher>
                 <njord.publishingType>automatic</njord.publishingType>
                 <njord.waitForStates>true</njord.waitForStates>

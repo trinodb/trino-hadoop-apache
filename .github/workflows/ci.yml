@@ -25,6 +25,7 @@ jobs:
           distribution: temurin
           java-version: ${{ matrix.java }}
       - name: Maven Install Dependencies
-        run: mvn install -B -V -DskipTests -Dair.check.skip-all
+        run: mvn install -B -V -DskipTests -DskipITs -Dair.check.skip-all
       - name: Maven Test
-        run: mvn clean install -B
+        # GitHub's hosted macOS runners do not provide Docker.
+        run: mvn clean install -B ${{ runner.os == 'macOS' && '-DexcludedGroups=docker' || '' }}
